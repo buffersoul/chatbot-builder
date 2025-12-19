@@ -125,4 +125,14 @@ export const getUserProfile = async () => {
     return response.data
 }
 
+export const changePassword = async (data) => {
+    const response = await apiClient.post('/auth/change-password', data);
+    return response.data;
+};
+
+export const getInvoices = async () => {
+    const response = await apiClient.get('/billing/invoices')
+    return response.data
+}
+
 export default apiClient

@@ -8,6 +8,10 @@ import BillingPage from './pages/BillingPage'
 import DashboardLayout from './components/DashboardLayout'
 import { useAuthStore } from './store/authStore'
 
+import SettingsPage from './pages/SettingsPage'
+
+import DashboardPage from './pages/DashboardPage'
+
 function App() {
     const isAuthenticated = useAuthStore((state) => state.isAuthenticated)
 
@@ -20,19 +24,14 @@ function App() {
 
                 {/* Protected Routes */}
                 <Route element={isAuthenticated ? <DashboardLayout /> : <Navigate to="/login" />}>
-                    <Route path="/" element={
-                        <div className="p-8">
-                            <h1 className="text-3xl font-bold">Dashboard</h1>
-                            <p className="text-muted-foreground mt-2">Welcome to your chatbot control center.</p>
-                        </div>
-                    } />
+                    <Route path="/" element={<DashboardPage />} />
                     <Route path="/knowledge" element={<KnowledgeBasePage />} />
                     <Route path="/chat" element={<ChatPage />} />
                     <Route path="/integrations" element={<IntegrationsPage />} />
                     <Route path="/billing" element={<BillingPage />} />
+                    <Route path="/settings" element={<SettingsPage />} />
                     <Route path="*" element={<Navigate to="/" replace />} />
                     <Route path="/conversations" element={<div className="p-8">Conversations (Coming Soon)</div>} />
-                    <Route path="/settings" element={<div className="p-8">Settings (Coming Soon)</div>} />
                 </Route>
             </Routes>
         </div>

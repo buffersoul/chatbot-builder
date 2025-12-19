@@ -213,6 +213,30 @@ class StripeService {
             });
         }
     }
+    async getInvoices(companyId) {
+        const company = await Company.findByPk(companyId);
+        if (!company || !company.stripe_customer_id) return [];
+
+        const invoices = await stripe.invoices.list({
+            customer: company.stripe_customer_id,
+            limit: 20
+        });
+
+        return invoices.data.map(invoice => ({
+            id: invoice.id,
+            number: invoice.number,
+            amount_due: invoice.amount_due,
+            amount_paid: invoice.amount_paid,
+            total: invoice.total,
+            currency: invoice.currency,
+            status: invoice.status,
+            created: invoice.created * 1000, // Convert to ms
+            period_start: invoice.period_start * 1000,
+            period_end: invoice.period_end * 1000,
+            pdf_url: invoice.invoice_pdf,
+            hosted_url: invoice.hosted_invoice_url
+        }));
+    }
 }
 
 module.exports = new StripeService();

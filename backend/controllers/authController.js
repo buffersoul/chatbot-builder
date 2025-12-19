@@ -162,8 +162,43 @@ const getMe = async (req, res) => {
     }
 };
 
+/**
+ * Change user password
+ */
+const changePassword = async (req, res) => {
+    try {
+        const { currentPassword, newPassword } = req.body;
+        const userId = req.user.id;
+
+        const user = await User.findByPk(userId);
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+
+        // Verify current password
+        const isValid = await comparePassword(currentPassword, user.password_hash);
+        if (!isValid) {
+            return res.status(400).json({ error: 'Incorrect current password' });
+        }
+
+        // Hash new password
+        const passwordHash = await hashPassword(newPassword);
+
+        // Update user
+        user.password_hash = passwordHash;
+        await user.save();
+
+        res.json({ message: 'Password updated successfully' });
+
+    } catch (error) {
+        console.error('Change password error:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+};
+
 module.exports = {
     register,
     login,
-    getMe
+    getMe,
+    changePassword
 };

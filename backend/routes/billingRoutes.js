@@ -65,6 +65,20 @@ router.post('/portal', authMiddleware, async (req, res) => {
 });
 
 /**
+ * @route GET /api/billing/invoices
+ * @desc Get invoice history
+ */
+router.get('/invoices', authMiddleware, async (req, res) => {
+    try {
+        const invoices = await stripeService.getInvoices(req.company_id);
+        res.json(invoices);
+    } catch (error) {
+        console.error('Fetch Invoices Error:', error);
+        res.status(500).json({ error: 'Failed to fetch invoices' });
+    }
+});
+
+/**
  * @route POST /api/billing/webhook
  * @desc Handle Stripe Webhooks (No Auth)
  */

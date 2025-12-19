@@ -6,12 +6,14 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Check, AlertCircle, Loader2 } from 'lucide-react';
-import { getPlans, getBillingUsage, createCheckoutSession, createPortalSession } from '../lib/api';
+import { getPlans, getBillingUsage, createCheckoutSession, createPortalSession, getInvoices } from '../lib/api';
 import { useAuthStore } from '../store/authStore';
+import { InvoiceTable } from '../components/billing/InvoiceTable';
 
 const BillingPage = () => {
     const [plans, setPlans] = useState([]);
     const [usage, setUsage] = useState(null);
+    const [invoices, setInvoices] = useState([]);
     const [loading, setLoading] = useState(true);
     const [statusParams] = useSearchParams();
     const { user, company, refreshUser } = useAuthStore();
@@ -42,6 +44,14 @@ const BillingPage = () => {
                 setUsage(usageData);
             } catch (err) {
                 console.error("Failed to fetch usage", err);
+            }
+
+            // Fetch Invoices
+            try {
+                const invoicesData = await getInvoices();
+                setInvoices(invoicesData);
+            } catch (err) {
+                console.error("Failed to fetch invoices", err);
             } finally {
                 setLoading(false);
             }
@@ -246,12 +256,7 @@ const BillingPage = () => {
                             <CardDescription>View and download past invoices</CardDescription>
                         </CardHeader>
                         <CardContent>
-                            <div className="text-center py-6 text-muted-foreground">
-                                <p>Invoices are managed directly via Stripe Portal.</p>
-                                <Button variant="link" onClick={handleManageSubscription}>
-                                    Go into Billing Portal
-                                </Button>
-                            </div>
+                            <InvoiceTable invoices={invoices} />
                         </CardContent>
                     </Card>
                 </TabsContent>
