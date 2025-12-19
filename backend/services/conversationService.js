@@ -6,13 +6,14 @@ const { Conversation, Message, sequelize } = require('../models');
  * @param {String} visitorId 
  * @returns {Promise<Conversation>}
  */
-const getOrCreateConversation = async (companyId, visitorId) => {
+const getOrCreateConversation = async (companyId, visitorId, platform = 'web') => {
     try {
         let conversation = await Conversation.findOne({
             where: {
                 company_id: companyId,
                 visitor_id: visitorId,
-                status: 'active'
+                status: 'active',
+                platform
             }
         });
 
@@ -21,8 +22,8 @@ const getOrCreateConversation = async (companyId, visitorId) => {
                 company_id: companyId,
                 visitor_id: visitorId,
                 status: 'active',
-                platform: 'web',
-                metadata: { created_via: 'web_widget' }
+                platform,
+                metadata: { created_via: platform }
             });
         }
         return conversation;
@@ -39,7 +40,7 @@ const getOrCreateConversation = async (companyId, visitorId) => {
  * @param {String} content 
  * @returns {Promise<Message>}
  */
-const addMessage = async (conversationId, role, content) => {
+const addMessage = async (conversationId, role, content, metadata = {}) => {
     const direction = role === 'user' ? 'inbound' : 'outbound';
     const messageId = `msg_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 
@@ -48,7 +49,9 @@ const addMessage = async (conversationId, role, content) => {
         message_id: messageId,
         direction,
         content,
-        message_type: 'text'
+        message_type: 'text',
+        rag_context_used: metadata.rag_context || null,
+        api_data_used: metadata.api_data || null
     });
 };
 

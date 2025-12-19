@@ -10,24 +10,46 @@ module.exports = (sequelize, DataTypes) => {
         id: {
             type: DataTypes.UUID,
             defaultValue: DataTypes.UUIDV4,
-            primaryKey: true
+            primaryKey: true,
+            allowNull: false
         },
         company_id: {
             type: DataTypes.UUID,
+            allowNull: false,
+            references: {
+                model: 'companies',
+                key: 'id'
+            }
+        },
+        platform: {
+            type: DataTypes.ENUM('whatsapp', 'facebook', 'instagram'),
             allowNull: false
         },
-        type: {
+        asset_id: {
             type: DataTypes.STRING,
+            allowNull: false,
+            unique: true
+        },
+        asset_name: {
+            type: DataTypes.STRING
+        },
+        access_token_encrypted: {
+            type: DataTypes.TEXT,
             allowNull: false
         },
-        key: {
-            type: DataTypes.STRING,
-            allowNull: false
+        token_expires_at: {
+            type: DataTypes.DATE
         },
-        value: DataTypes.TEXT,
-        is_encrypted: {
+        is_active: {
+            type: DataTypes.BOOLEAN,
+            defaultValue: true
+        },
+        webhook_verified: {
             type: DataTypes.BOOLEAN,
             defaultValue: false
+        },
+        connected_at: {
+            type: DataTypes.DATE
         }
     }, {
         sequelize,

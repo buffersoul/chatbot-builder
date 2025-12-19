@@ -80,4 +80,20 @@ export const getChatHistory = async (conversationId) => {
     return response.data
 }
 
+// --- Meta Integration API ---
+
+export const getMetaAuthUrl = async () => {
+    const response = await apiClient.get('/meta/auth-url')
+    return response.data.url
+}
+
+export const getMetaAssets = async () => {
+    const response = await apiClient.get('/meta/assets')
+    return response.data
+}
+
+export const disconnectMetaAsset = async (assetId) => {
+    await apiClient.post(`/meta/disconnect/${assetId}`)
+}
+
 export default apiClient

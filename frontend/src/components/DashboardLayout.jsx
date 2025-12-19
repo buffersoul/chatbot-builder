@@ -7,7 +7,8 @@ import {
     MessageSquare,
     Settings,
     LogOut,
-    Bot
+    Bot,
+    Share2
 } from 'lucide-react'
 
 function DashboardLayout() {
@@ -21,6 +22,7 @@ function DashboardLayout() {
         { href: '/knowledge', icon: Database, label: 'Knowledge Base' },
         { href: '/chat', icon: MessageSquare, label: 'Experience Chat' },
         { href: '/conversations', icon: MessageSquare, label: 'Conversations' },
+        { href: '/integrations', icon: Share2, label: 'Integrations' },
         { href: '/settings', icon: Settings, label: 'Settings' },
     ]
 
