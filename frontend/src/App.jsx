@@ -10,6 +10,8 @@ import { useAuthStore } from './store/authStore'
 
 import SettingsPage from './pages/SettingsPage'
 
+import ConversationsPage from './pages/ConversationsPage'
+
 import DashboardPage from './pages/DashboardPage'
 
 function App() {
@@ -25,6 +27,7 @@ function App() {
                 {/* Protected Routes */}
                 <Route element={isAuthenticated ? <DashboardLayout /> : <Navigate to="/login" />}>
                     <Route path="/" element={<DashboardPage />} />
+                    <Route path="/conversations" element={<ConversationsPage />} />
                     <Route path="/knowledge" element={<KnowledgeBasePage />} />
                     <Route path="/chat" element={<ChatPage />} />
                     <Route path="/integrations" element={<IntegrationsPage />} />

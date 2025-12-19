@@ -80,6 +80,21 @@ export const getChatHistory = async (conversationId) => {
     return response.data
 }
 
+export const getConversations = async (params) => {
+    const response = await apiClient.get('/conversations', { params })
+    return response.data
+}
+
+export const getConversationDetails = async (id) => {
+    const response = await apiClient.get(`/conversations/${id}`)
+    return response.data
+}
+
+export const replyToConversation = async (conversationId, content) => {
+    const response = await apiClient.post(`/conversations/${conversationId}/send`, { content })
+    return response.data
+}
+
 // --- Meta Integration API ---
 
 export const getMetaAuthUrl = async () => {

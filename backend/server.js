@@ -30,6 +30,7 @@ app.use('/api/documents', require('./routes/documentRoutes'));
 app.use('/api/chat', require('./routes/chatRoutes'));
 app.use('/api/meta', require('./routes/metaRoutes'));
 app.use('/api/billing', require('./routes/billingRoutes'));
+app.use('/api/conversations', require('./routes/conversationRoutes'));
 app.use('/api/dashboard', require('./routes/dashboardRoutes'));
 
 // Health check

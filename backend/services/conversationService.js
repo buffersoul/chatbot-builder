@@ -1,4 +1,5 @@
-const { Conversation, Message, sequelize } = require('../models');
+const { Conversation, Message, sequelize, Sequelize } = require('../models');
+const { Op } = Sequelize;
 
 /**
  * Create a new conversation or get active one for visitor.
@@ -69,8 +70,42 @@ const getHistory = async (conversationId, limit = 20) => {
     });
 };
 
+const listConversations = async (companyId, filters = {}, page = 1, limit = 10) => {
+    const offset = (page - 1) * limit;
+    const whereClause = { company_id: companyId };
+
+    if (filters.status) whereClause.status = filters.status;
+    if (filters.platform) whereClause.platform = filters.platform;
+    if (filters.search) {
+        whereClause.visitor_id = { [Op.iLike]: `%${filters.search}%` };
+    }
+
+    const { count, rows } = await Conversation.findAndCountAll({
+        where: whereClause,
+        limit,
+        offset,
+        order: [['updated_at', 'DESC']],
+        include: [
+            {
+                model: Message,
+                as: 'messages',
+                limit: 1,
+                order: [['created_at', 'DESC']] // Get latest message
+            }
+        ]
+    });
+
+    return {
+        conversations: rows,
+        total: count,
+        pages: Math.ceil(count / limit),
+        currentPage: page
+    };
+};
+
 module.exports = {
     getOrCreateConversation,
     addMessage,
-    getHistory
+    getHistory,
+    listConversations
 };
