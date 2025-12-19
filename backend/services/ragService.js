@@ -4,7 +4,7 @@ const conversationService = require('./conversationService');
 
 // Initialize Gemini Pro
 const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY);
-const model = genAI.getGenerativeModel({ model: "gemini-1.5-pro" });
+const model = genAI.getGenerativeModel({ model: "gemini-flash-latest" });
 
 /**
  * Main RAG Execution Flow.
