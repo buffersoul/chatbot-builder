@@ -2,21 +2,26 @@
 trigger: always_on
 ---
 
-# Stripe Payment Integration Rules
+# Stripe Integration Strategy (Hybrid)
 
-**SECURITY WARNING:**
-You are **STRICTLY PROHIBITED** from asking the user for Stripe API keys (Secret or Publishable) or hardcoding them into source files. The Stripe MCP is already authenticated securely.
+**STRATEGY OVERVIEW:**
+We use a strict separation of concerns between **Build-Time Configuration** (MCP) and **Runtime Execution** (SDK).
 
-**MANDATORY TOOL USAGE:**
-For any billing, subscription, or customer management task, you MUST use the provided `stripe` MCP tools.
+**1. ROLE OF STRIPE MCP (Dev/Setup Only):**
+Use the Stripe MCP tool *exclusively* for:
+* **Documentation:** If unsure about an API parameter, use the MCP to read Stripe documentation.
+* **Initial Data Seeding:** Use the MCP to create necessary infrastructure *once* and retrieve their IDs.
+    * *Example:* "Create a 'Pro Plan' product." -> Call MCP to create it -> Copy the resulting `price_id` into the project environment variables.
+* **Account Checks:** Verifying webhooks or checking if a customer exists during debugging.
 
-1.  **Prefer Hosted Solutions**: When setting up checkout flows, prioritize creating **Stripe Payment Links** or **Checkout Sessions** via the MCP tool over building custom UI forms, unless explicitly requested otherwise.
-2.  **Customer Lookups**: Before creating a new customer, always use the tool to search if the email already exists to avoid duplicates.
-3.  **Portals**: Use the MCP to generate Customer Portal links for subscription management (upgrades/cancellations).
+**2. ROLE OF STRIPE SDK (Runtime/App):**
+You **MUST** use the official Stripe Node.js/Python SDK (`npm install stripe`) for all application logic.
+* **Transactions:** Checkout Sessions, Payment Intents, and Subscription logic must be written in code.
+* **Webhooks:** Write standard API route handlers to verify signatures and process events.
 
-**PROHIBITED ACTIONS:**
-* **Do Not** write manual HTTP requests (`axios.post('https://api.stripe.com...')`).
-* **Do Not** attempt to generate "Test Card Numbers" manually; use the MCP metadata if available or refer to official Stripe test docs.
+**PROHIBITED BEHAVIOR:**
+* **Do not** use the MCP tool to simulate a user transaction (e.g., do not call `mcp.create_payment_link` to "test" the flow). Write a standard integration test using the SDK instead.
+* **Do not** write code that attempts to create Products/Prices dynamically on every server start. These should be static resources set up via MCP.
 
-**DEVELOPMENT MODE:**
-Assume we are in **Test Mode** unless the user explicitly says "Production".
+**ENV VAR HANDLING:**
+When the MCP returns an ID (e.g., `price_12345`), immediately instruct me to add it to `.env` (e.g., `STRIPE_PRICE_ID_PRO=price_12345`).
