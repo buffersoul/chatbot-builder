@@ -95,6 +95,35 @@ export const replyToConversation = async (conversationId, content) => {
     return response.data
 }
 
+// Team API
+export const getTeam = async () => {
+    const response = await apiClient.get('/team');
+    return response.data;
+};
+
+export const createInvitation = async (email, role) => {
+    const response = await apiClient.post('/team/invite', { email, role });
+    return response.data;
+};
+
+export const revokeInvitation = async (id) => {
+    const response = await apiClient.delete(`/team/invitations/${id}`);
+    return response.data;
+};
+
+export const verifyInvitation = async (token) => {
+    // Uses public endpoint, but apiClient instance might have auth headers. 
+    // Usually fine, but if token is invalid, we handle error.
+    // Note: This matches /api/team/verify-invite?token=...
+    const response = await apiClient.get(`/team/verify-invite?token=${token}`);
+    return response.data;
+};
+
+export const acceptInvitation = async (data) => {
+    const response = await apiClient.post('/team/accept-invite', data);
+    return response.data;
+};
+
 // --- Meta Integration API ---
 
 export const getMetaAuthUrl = async () => {

@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { useNavigate } from 'react-router-dom';
 import { Building, User, Shield, CreditCard } from 'lucide-react';
 import { SecuritySettings } from '../components/settings/SecuritySettings';
+import TeamSettings from '../components/settings/TeamSettings';
 
 const SettingsPage = () => {
     const { user, company } = useAuthStore();
@@ -91,19 +92,9 @@ const SettingsPage = () => {
                     </Card>
                 </TabsContent>
 
-                {/* Team Tab (Placeholder) */}
+                {/* Team Tab */}
                 <TabsContent value="team" className="mt-6">
-                    <Card>
-                        <CardHeader>
-                            <CardTitle>Team Members</CardTitle>
-                            <CardDescription>Invite and manage your team.</CardDescription>
-                        </CardHeader>
-                        <CardContent className="text-center py-10 text-muted-foreground">
-                            <User className="h-10 w-10 mx-auto mb-4 opacity-50" />
-                            <p>Team management is coming soon.</p>
-                            <p className="text-sm">You will be able to invite members and assign roles.</p>
-                        </CardContent>
-                    </Card>
+                    <TeamSettings />
                 </TabsContent>
 
                 {/* Security Tab */}

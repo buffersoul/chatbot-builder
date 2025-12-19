@@ -25,13 +25,23 @@ app.use((req, res, next) => {
 app.use(express.urlencoded({ extended: true }));
 
 // Routes
-app.use('/api/auth', require('./routes/authRoutes'));
-app.use('/api/documents', require('./routes/documentRoutes'));
-app.use('/api/chat', require('./routes/chatRoutes'));
-app.use('/api/meta', require('./routes/metaRoutes'));
-app.use('/api/billing', require('./routes/billingRoutes'));
-app.use('/api/conversations', require('./routes/conversationRoutes'));
-app.use('/api/dashboard', require('./routes/dashboardRoutes'));
+const authRoutes = require('./routes/authRoutes');
+const documentRoutes = require('./routes/documentRoutes');
+const chatRoutes = require('./routes/chatRoutes');
+const metaRoutes = require('./routes/metaRoutes');
+const billingRoutes = require('./routes/billingRoutes');
+const conversationRoutes = require('./routes/conversationRoutes');
+const dashboardRoutes = require('./routes/dashboardRoutes');
+const teamRoutes = require('./routes/teamRoutes'); // New: Require teamRoutes
+
+app.use('/api/auth', authRoutes);
+app.use('/api/documents', documentRoutes);
+app.use('/api/chat', chatRoutes);
+app.use('/api/meta', metaRoutes);
+app.use('/api/billing', billingRoutes);
+app.use('/api/conversations', conversationRoutes);
+app.use('/api/dashboard', dashboardRoutes);
+app.use('/api/team', teamRoutes); // New: Mount teamRoutes
 
 // Health check
 app.get('/health', (req, res) => {

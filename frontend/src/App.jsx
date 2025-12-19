@@ -11,22 +11,31 @@ import { useAuthStore } from './store/authStore'
 import SettingsPage from './pages/SettingsPage'
 
 import ConversationsPage from './pages/ConversationsPage'
+import AcceptInvitePage from './pages/AcceptInvitePage'; // Import Accept Invite
+import { Toaster } from "@/components/ui/toaster"
+
 
 import DashboardPage from './pages/DashboardPage'
 
 function App() {
-    const isAuthenticated = useAuthStore((state) => state.isAuthenticated)
+    const { checkAuth, isAuthenticated } = useAuthStore((state) => ({
+        isAuthenticated: state.isAuthenticated,
+        checkAuth: state.checkAuth,
+    }));
 
     return (
         <div className="min-h-screen bg-background text-foreground">
+            <Toaster />
             <Routes>
                 {/* Public Routes */}
                 <Route path="/login" element={!isAuthenticated ? <LoginPage /> : <Navigate to="/" />} />
                 <Route path="/register" element={!isAuthenticated ? <RegisterPage /> : <Navigate to="/" />} />
+                <Route path="/accept-invite" element={<AcceptInvitePage />} />
 
                 {/* Protected Routes */}
                 <Route element={isAuthenticated ? <DashboardLayout /> : <Navigate to="/login" />}>
                     <Route path="/" element={<DashboardPage />} />
+                    <Route path="/dashboard" element={<DashboardPage />} />
                     <Route path="/conversations" element={<ConversationsPage />} />
                     <Route path="/knowledge" element={<KnowledgeBasePage />} />
                     <Route path="/chat" element={<ChatPage />} />
@@ -34,7 +43,6 @@ function App() {
                     <Route path="/billing" element={<BillingPage />} />
                     <Route path="/settings" element={<SettingsPage />} />
                     <Route path="*" element={<Navigate to="/" replace />} />
-                    <Route path="/conversations" element={<div className="p-8">Conversations (Coming Soon)</div>} />
                 </Route>
             </Routes>
         </div>
