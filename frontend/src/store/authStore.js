@@ -27,6 +27,17 @@ export const useAuthStore = create(
             }),
 
             updateAccessToken: (token) => set({ accessToken: token }),
+
+            refreshUser: async () => {
+                try {
+                    // Dynamic import to avoid circular dependency if possible, or just assume api is available
+                    const { getUserProfile } = await import('../lib/api');
+                    const userData = await getUserProfile();
+                    set({ user: userData.user, company: userData.company });
+                } catch (error) {
+                    console.error("Failed to refresh user:", error);
+                }
+            }
         }),
         {
             name: 'auth-storage',

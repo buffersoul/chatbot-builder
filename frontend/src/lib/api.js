@@ -118,4 +118,11 @@ export const createPortalSession = async () => {
     return response.data
 }
 
+// --- Auth API ---
+
+export const getUserProfile = async () => {
+    const response = await apiClient.get('/auth/me')
+    return response.data
+}
+
 export default apiClient

@@ -1,4 +1,5 @@
 const Stripe = require('stripe');
+const { Op } = require('sequelize');
 const { Company, PricingTier, BillingInvoice, sequelize } = require('../../models');
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || 'sk_test_placeholder');
@@ -28,6 +29,14 @@ class StripeService {
 
         await company.update({ stripe_customer_id: customer.id });
         return customer;
+    }
+
+    /**
+     * Helper to convert Stripe timestamp (seconds) to JS Date
+     */
+    _toDate(seconds) {
+        if (!seconds) return null;
+        return new Date(seconds * 1000);
     }
 
     /**
@@ -99,6 +108,7 @@ class StripeService {
                 await this.handleInvoicePaymentSucceeded(event.data.object);
                 break;
             case 'customer.subscription.updated':
+            case 'customer.subscription.created':
                 await this.handleSubscriptionUpdated(event.data.object);
                 break;
             case 'customer.subscription.deleted':
@@ -134,8 +144,8 @@ class StripeService {
                 company_id: company.id,
                 stripe_invoice_id: invoice.id,
                 invoice_number: invoice.number,
-                period_start: new Date(invoice.lines.data[0].period.start * 1000),
-                period_end: new Date(invoice.lines.data[0].period.end * 1000),
+                period_start: this._toDate(invoice.lines.data[0].period.start),
+                period_end: this._toDate(invoice.lines.data[0].period.end),
                 final_amount: invoice.total,
                 status: 'paid',
                 paid_at: new Date(),
@@ -146,13 +156,51 @@ class StripeService {
     }
 
     async handleSubscriptionUpdated(subscription) {
+        console.log(`ℹ️ [StripeService] Processing subscription update: ${subscription.id}`);
+
         // Find company by customer ID
         const company = await Company.findOne({ where: { stripe_customer_id: subscription.customer } });
-        if (company) {
-            await company.update({
-                current_period_end: new Date(subscription.current_period_end * 1000)
-            });
+        if (!company) {
+            console.error(`❌ [StripeService] Company not found for customer: ${subscription.customer}`);
+            return;
         }
+
+        // Get the price ID from the subscription
+        const priceId = subscription.items.data[0].price.id;
+        console.log(`ℹ️ [StripeService] New Price ID: ${priceId}`);
+
+        // Find the matching tier
+        const tier = await PricingTier.findOne({
+            where: {
+                [Op.or]: [
+                    { stripe_price_id: priceId },
+                    { stripe_annual_price_id: priceId }
+                ]
+            }
+        });
+
+        if (!tier) {
+            console.error(`❌ [StripeService] No PricingTier found for Price ID: ${priceId}`);
+            // Fallback: Just update dates if tier not found, but log error
+            await company.update({
+                current_period_end: this._toDate(subscription.current_period_end),
+                status: subscription.status
+            });
+            return;
+        }
+
+        console.log(`✅ [StripeService] Updating company ${company.id} to tier: ${tier.tier_name}`);
+
+        // Determine billing cycle
+        const interval = subscription.items.data[0].plan.interval === 'year' ? 'annual' : 'monthly';
+
+        await company.update({
+            subscription_tier: tier.tier_name,
+            current_period_end: this._toDate(subscription.current_period_end),
+            status: subscription.status,
+            billing_cycle: interval,
+            stripe_subscription_id: subscription.id
+        });
     }
 
     async handleSubscriptionDeleted(subscription) {

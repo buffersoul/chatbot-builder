@@ -14,12 +14,19 @@ const BillingPage = () => {
     const [usage, setUsage] = useState(null);
     const [loading, setLoading] = useState(true);
     const [statusParams] = useSearchParams();
-    const { user } = useAuthStore();
+    const { user, company, refreshUser } = useAuthStore();
     const [error, setError] = useState(null);
     const [billingCycle, setBillingCycle] = useState('monthly');
 
     useEffect(() => {
         const fetchData = async () => {
+            // Always refresh user/company data to get latest subscription status
+            console.log("Refreshing user data...");
+            await refreshUser();
+
+
+
+
             // Fetch Plans
             try {
                 const plansData = await getPlans();
@@ -40,7 +47,7 @@ const BillingPage = () => {
             }
         };
         fetchData();
-    }, []);
+    }, [statusParams]);
 
     const handleSubscribe = async (tierName, interval) => {
         try {
@@ -72,7 +79,7 @@ const BillingPage = () => {
         );
     }
 
-    const currentTierName = user?.company?.subscription_tier || 'free';
+    const currentTierName = company?.subscription_tier || 'free';
     const currentTier = plans.find(p => p.tier_name === currentTierName) || plans[0];
 
     // Calculate percentages
@@ -133,7 +140,7 @@ const BillingPage = () => {
                                     <Badge variant={currentTierName === 'free' ? 'secondary' : 'default'}>{currentTierName === 'free' ? 'Active' : 'Pro'}</Badge>
                                 </div>
                                 <div className="text-sm text-muted-foreground">
-                                    Billing Cycle: {user?.company?.billing_cycle || 'Monthly'}
+                                    Billing Cycle: {company?.billing_cycle || 'Monthly'}
                                 </div>
                             </CardContent>
                         </Card>
@@ -218,7 +225,7 @@ const BillingPage = () => {
                                         </ul>
                                     </CardContent>
                                     <CardFooter>
-                                        {currentTierName === plan.tier_name && user?.company?.billing_cycle === billingCycle ? (
+                                        {currentTierName === plan.tier_name && company?.billing_cycle === billingCycle ? (
                                             <Button className="w-full" disabled>Current Plan</Button>
                                         ) : (
                                             <Button className="w-full" onClick={() => handleSubscribe(plan.tier_name, billingCycle)}>

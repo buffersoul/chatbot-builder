@@ -128,7 +128,42 @@ const login = async (req, res) => {
     }
 };
 
+
+/**
+ * Get current user profile
+ */
+const getMe = async (req, res) => {
+    try {
+        const user = await User.findByPk(req.user.id, {
+            include: [{ model: Company, as: 'company' }]
+        });
+
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+
+        res.json({
+            user: {
+                id: user.id,
+                email: user.email,
+                role: user.role
+            },
+            company: user.company ? {
+                id: user.company_id,
+                name: user.company.name,
+                subscription_tier: user.company.subscription_tier,
+                billing_cycle: user.company.billing_cycle,
+                stripe_customer_id: user.company.stripe_customer_id
+            } : null
+        });
+    } catch (error) {
+        console.error('Get profile error:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+};
+
 module.exports = {
     register,
-    login
+    login,
+    getMe
 };
