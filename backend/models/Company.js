@@ -5,7 +5,13 @@ module.exports = (sequelize, DataTypes) => {
     class Company extends Model {
         static associate(models) {
             Company.hasMany(models.User, { foreignKey: 'company_id', as: 'users' });
+            Company.hasMany(models.CompanyApi, { foreignKey: 'company_id', as: 'apis' });
             Company.hasMany(models.MetaAsset, { foreignKey: 'company_id', as: 'meta_assets' });
+
+            // Billing Associations
+            Company.belongsTo(models.PricingTier, { foreignKey: 'subscription_tier', targetKey: 'tier_name', as: 'current_tier' });
+            Company.hasMany(models.UsageRecord, { foreignKey: 'company_id', as: 'usage_records' });
+            Company.hasMany(models.BillingInvoice, { foreignKey: 'company_id', as: 'invoices' });
             Company.hasMany(models.Document, { foreignKey: 'company_id', as: 'documents' });
             Company.hasMany(models.Conversation, { foreignKey: 'company_id', as: 'conversations' });
         }

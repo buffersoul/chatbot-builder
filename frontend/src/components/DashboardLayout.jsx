@@ -3,12 +3,13 @@ import { useAuthStore } from '../store/authStore'
 import { Button } from './ui/button'
 import {
     LayoutDashboard,
-    Database,
+    Files,
     MessageSquare,
     Settings,
     LogOut,
     Bot,
-    Share2
+    Share2,
+    CreditCard // Added CreditCard
 } from 'lucide-react'
 
 function DashboardLayout() {
@@ -19,10 +20,11 @@ function DashboardLayout() {
 
     const navItems = [
         { href: '/', icon: LayoutDashboard, label: 'Dashboard' },
-        { href: '/knowledge', icon: Database, label: 'Knowledge Base' },
+        { href: '/knowledge', icon: Files, label: 'Knowledge Base' }, // Changed icon from Database to Files
         { href: '/chat', icon: MessageSquare, label: 'Experience Chat' },
         { href: '/conversations', icon: MessageSquare, label: 'Conversations' },
         { href: '/integrations', icon: Share2, label: 'Integrations' },
+        { href: '/billing', icon: CreditCard, label: 'Billing' }, // Added Billing item
         { href: '/settings', icon: Settings, label: 'Settings' },
     ]
 

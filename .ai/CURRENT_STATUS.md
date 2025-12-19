@@ -8,25 +8,28 @@
 - **Phase 1:** Authentication & Multi-Tenancy (JWT, RBAC)
 - **Phase 2:** Knowledge Base Management (Ingestion, Vector DB)
 - **Phase 3:** RAG Chatbot Engine (LangChain + Gemini)
-- **Phase 4:** Meta Platform Integration (OAuth, Webhooks, RAG)
+- **Phase 6:** Stripe Billing & Usage Tracking (Backend)
+- **Phase 7:** Frontend Dashboard & Billing UI
 
 ---
 
 ## 🚧 In Progress
-- Verification of Meta integration with real credentials.
+- End-to-End System Testing & QA.
 
 ---
 
 ## ❌ Known Issues
 - **Action Required:** Meta App credentials (`META_APP_ID`, `META_APP_SECRET`, `META_VERIFY_TOKEN`) need to be added to `.env`.
-- **Refactor:** `Token encryption` in `MetaService` requires implementation of AES logic (currently placeholder).
 
 ---
 
 ## 🎯 Next Immediate Goal
-**Phase 6: Stripe Billing & Usage Tracking**
-- Implement Stripe subscription models.
-- Track token and message usage per company.
+**Phase 9: Deployment & Production**
+- Setup Docker & Nginx.
+- Configure CI/CD pipeline (GitHub Actions).
+- Deploy to VPS.
+- Security audit (API protection, RLS-equivalent checks).
+- Performance tuning (Indexing, Caching).
 
 ---
 

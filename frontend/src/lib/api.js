@@ -96,4 +96,26 @@ export const disconnectMetaAsset = async (assetId) => {
     await apiClient.post(`/meta/disconnect/${assetId}`)
 }
 
+// --- Billing API ---
+
+export const getPlans = async () => {
+    const response = await apiClient.get('/billing/plans')
+    return response.data
+}
+
+export const getBillingUsage = async () => {
+    const response = await apiClient.get('/billing/usage')
+    return response.data
+}
+
+export const createCheckoutSession = async (data) => {
+    const response = await apiClient.post('/billing/checkout', data)
+    return response.data
+}
+
+export const createPortalSession = async () => {
+    const response = await apiClient.post('/billing/portal')
+    return response.data
+}
+
 export default apiClient

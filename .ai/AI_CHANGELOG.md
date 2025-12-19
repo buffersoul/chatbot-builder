@@ -147,3 +147,55 @@ Will be documented in `.env.example` during Phase 0 setup
 ### Context
 - Meta integration is code-complete. Use `IntegrationsPage` to connect Pages.
 - **Next Steps:** User to add Meta credentials to `.env` and verify via UI. Then proceed to Phase 6 (Stripe Billing) or Phase 5 (External APIs).
+
+---
+
+## [2025-12-19 12:40 PKT] - Optimization: RAG Retrieval Limit Increased
+
+### Action
+- Increased `topK` retrieval limit from **5** to **30** chunks in `retrievalService.js` and `ragService.js`.
+
+### Reasoning
+- User reported that relevant information in large documents (beyond the top 5 chunks) was not being retrieved, leading to "I don't know" answers.
+- Gemini's large context window allows for significantly more context. Increasing the limit to 30 (~6-8k tokens) dramatically improves recall without hitting limits.
+
+### Context
+- This should solve the issue for large uploaded files where semantic similarity might spread relevant info across many chunks.
+
+---
+
+## [2025-12-19 13:45 PKT] - Phase 6: Stripe Billing Backend Complete
+
+### Action
+- **Backend**: Installed `stripe`. Created `PricingTier`, `UsageRecord`, `BillingInvoice` models.
+- **Services**: Implemented `stripeService.js` (Subscriptions, Webhooks) and `usageService.js`.
+- **Routes**: Created `billingRoutes.js`.
+- **Data**: Seeded Default Pricing Tiers (Free, Starter, Pro).
+
+### Reasoning
+- Essential for SaaS monetization.
+- Usage tracking requires strict daily records to prevent abuse and calculate costs.
+- Webhooks are critical for async subscription status updates (payment success/fail).
+
+### Context
+- Backend is ready for Billing UI implementation.
+- **Next Steps**: User to provide Stripe keys. Proceed to Phase 7 (Frontend Billing UI).
+
+---
+
+## [2025-12-19 14:00 PKT] - Phase 7: Frontend Billing UI Complete
+
+### Action
+- **Frontend**: Created `BillingPage.jsx` with Tabs (Overview, Plans, Invoices).
+- **Components**: Added `Tabs` shadcn component. Fixed sidebar imports.
+- **Routing**: Added `/billing` route and nav item.
+- **Integration**: Mapped new API endpoints to UI.
+
+### Reasoning
+- Provides self-serve subscription management for users.
+- Transparency in usage tracking (progress bars).
+- Seamless upgrade flow using Stripe Checkout.
+
+### Context
+- Full billing stack (Backend + Frontend) is now implemented.
+- **Next Steps**: End-to-End testing and Quality Assurance (Phase 8).

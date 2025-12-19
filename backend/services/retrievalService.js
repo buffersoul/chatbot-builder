@@ -17,7 +17,7 @@ const embeddingsModel = new GoogleGenerativeAIEmbeddings({
  * @param {Number} limit 
  * @returns {Promise<Array>}
  */
-const searchParams = async (companyId, query, limit = 5) => {
+const searchParams = async (companyId, query, limit = 30) => {
     try {
         // 1. Generate Query Embedding
         const queryVector = await embeddingsModel.embedQuery(query);

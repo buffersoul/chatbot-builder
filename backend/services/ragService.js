@@ -38,7 +38,7 @@ const executeRAGChatbot = async (companyId, visitorId, userQuery, platform = 'we
         console.log(`Processing RAG for Co:${companyId} / Conv:${conversation.id} / Q:${userQuery}`);
 
         // 3. Retrieve Relevant Documents (RAG Context)
-        const similarChunks = await retrievalService.searchParams(companyId, userQuery);
+        const similarChunks = await retrievalService.searchParams(companyId, userQuery, 30);
         const contextText = retrievalService.formatContext(similarChunks);
         console.log(`Retrieved ${similarChunks.length} chunks`);
 
@@ -143,7 +143,6 @@ ${contextText}
         return {
             response: responseText,
             conversationId: conversation.id,
-            sources: similarChunks.map(c => c.metadata?.source).filter(Boolean),
             tools_used: apiDataUsed.length
         };
 

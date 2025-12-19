@@ -4,6 +4,7 @@ import RegisterPage from './pages/RegisterPage'
 import KnowledgeBasePage from './pages/KnowledgeBasePage'
 import ChatPage from './pages/ChatPage'
 import IntegrationsPage from './pages/IntegrationsPage'
+import BillingPage from './pages/BillingPage'
 import DashboardLayout from './components/DashboardLayout'
 import { useAuthStore } from './store/authStore'
 
@@ -28,6 +29,8 @@ function App() {
                     <Route path="/knowledge" element={<KnowledgeBasePage />} />
                     <Route path="/chat" element={<ChatPage />} />
                     <Route path="/integrations" element={<IntegrationsPage />} />
+                    <Route path="/billing" element={<BillingPage />} />
+                    <Route path="*" element={<Navigate to="/" replace />} />
                     <Route path="/conversations" element={<div className="p-8">Conversations (Coming Soon)</div>} />
                     <Route path="/settings" element={<div className="p-8">Settings (Coming Soon)</div>} />
                 </Route>
