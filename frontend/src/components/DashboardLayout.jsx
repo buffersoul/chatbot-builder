@@ -19,13 +19,13 @@ function DashboardLayout() {
     const company = useAuthStore((state) => state.company)
 
     const navItems = [
-        { href: '/', icon: LayoutDashboard, label: 'Dashboard' },
-        { href: '/knowledge', icon: Files, label: 'Knowledge Base' }, // Changed icon from Database to Files
-        { href: '/chat', icon: MessageSquare, label: 'Experience Chat' },
-        { href: '/conversations', icon: MessageSquare, label: 'Conversations' },
-        { href: '/integrations', icon: Share2, label: 'Integrations' },
-        { href: '/billing', icon: CreditCard, label: 'Billing' }, // Added Billing item
-        { href: '/settings', icon: Settings, label: 'Settings' },
+        { href: '/', icon: LayoutDashboard, label: 'Dashboard', roles: ['owner', 'admin', 'agent'] },
+        { href: '/knowledge', icon: Files, label: 'Knowledge Base', roles: ['owner', 'admin', 'agent'] },
+        { href: '/chat', icon: MessageSquare, label: 'Experience Chat', roles: ['owner', 'admin', 'agent'] },
+        { href: '/conversations', icon: MessageSquare, label: 'Conversations', roles: ['owner', 'admin', 'agent'] },
+        { href: '/integrations', icon: Share2, label: 'Integrations', roles: ['owner', 'admin'] },
+        { href: '/billing', icon: CreditCard, label: 'Billing', roles: ['owner'] },
+        { href: '/settings', icon: Settings, label: 'Settings', roles: ['owner', 'admin'] },
     ]
 
     return (
@@ -43,6 +43,7 @@ function DashboardLayout() {
                     </div>
                     <nav className="space-y-1">
                         {navItems.map((item) => {
+                            if (item.roles && !item.roles.includes(user?.role)) return null;
                             const Icon = item.icon
                             const isActive = location.pathname === item.href
                             return (

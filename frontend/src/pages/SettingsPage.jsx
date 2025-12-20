@@ -24,9 +24,9 @@ const SettingsPage = () => {
             <Tabs defaultValue="profile" className="w-full">
                 <TabsList className="grid w-full grid-cols-4 lg:w-[400px]">
                     <TabsTrigger value="profile">Profile</TabsTrigger>
-                    <TabsTrigger value="company">Company</TabsTrigger>
-                    <TabsTrigger value="team">Team</TabsTrigger>
-                    <TabsTrigger value="security">Security</TabsTrigger>
+                    {user?.role !== 'agent' && <TabsTrigger value="company">Company</TabsTrigger>}
+                    {user?.role !== 'agent' && <TabsTrigger value="team">Team</TabsTrigger>}
+                    {user?.role !== 'agent' && <TabsTrigger value="security">Security</TabsTrigger>}
                 </TabsList>
 
                 {/* User Profile Tab */}
@@ -60,47 +60,53 @@ const SettingsPage = () => {
                 </TabsContent>
 
                 {/* Company Profile Tab */}
-                <TabsContent value="company" className="mt-6">
-                    <Card>
-                        <CardHeader>
-                            <CardTitle>Company Details</CardTitle>
-                            <CardDescription>Manage your company information.</CardDescription>
-                        </CardHeader>
-                        <CardContent className="space-y-4">
-                            <div className="space-y-2">
-                                <Label htmlFor="companyName">Company Name</Label>
-                                <div className="flex gap-2">
-                                    <Building className="w-4 h-4 mt-3 text-muted-foreground absolute ml-3" />
-                                    <Input id="companyName" value={company?.name || ''} readOnly className="pl-9 bg-muted" />
+                {user?.role !== 'agent' && (
+                    <TabsContent value="company" className="mt-6">
+                        <Card>
+                            <CardHeader>
+                                <CardTitle>Company Details</CardTitle>
+                                <CardDescription>Manage your company information.</CardDescription>
+                            </CardHeader>
+                            <CardContent className="space-y-4">
+                                <div className="space-y-2">
+                                    <Label htmlFor="companyName">Company Name</Label>
+                                    <div className="flex gap-2">
+                                        <Building className="w-4 h-4 mt-3 text-muted-foreground absolute ml-3" />
+                                        <Input id="companyName" value={company?.name || ''} readOnly className="pl-9 bg-muted" />
+                                    </div>
                                 </div>
-                            </div>
-                            <div className="space-y-2">
-                                <Label htmlFor="tier">Subscription Tier</Label>
-                                <div className="flex items-center gap-4">
-                                    <Input id="tier" value={company?.subscription_tier || 'Free'} readOnly className="bg-muted capitalize" />
-                                    <Button variant="outline" onClick={() => navigate('/billing')}>
-                                        <CreditCard className="mr-2 h-4 w-4" />
-                                        Manage Billing
-                                    </Button>
+                                <div className="space-y-2">
+                                    <Label htmlFor="tier">Subscription Tier</Label>
+                                    <div className="flex items-center gap-4">
+                                        <Input id="tier" value={company?.subscription_tier || 'Free'} readOnly className="bg-muted capitalize" />
+                                        <Button variant="outline" onClick={() => navigate('/billing')}>
+                                            <CreditCard className="mr-2 h-4 w-4" />
+                                            Manage Billing
+                                        </Button>
+                                    </div>
                                 </div>
-                            </div>
-                            <div className="space-y-2">
-                                <Label htmlFor="cid">Company ID</Label>
-                                <Input id="cid" value={company?.id || ''} readOnly className="font-mono text-xs bg-muted" />
-                            </div>
-                        </CardContent>
-                    </Card>
-                </TabsContent>
+                                <div className="space-y-2">
+                                    <Label htmlFor="cid">Company ID</Label>
+                                    <Input id="cid" value={company?.id || ''} readOnly className="font-mono text-xs bg-muted" />
+                                </div>
+                            </CardContent>
+                        </Card>
+                    </TabsContent>
+                )}
 
                 {/* Team Tab */}
-                <TabsContent value="team" className="mt-6">
-                    <TeamSettings />
-                </TabsContent>
+                {user?.role !== 'agent' && (
+                    <TabsContent value="team" className="mt-6">
+                        <TeamSettings />
+                    </TabsContent>
+                )}
 
                 {/* Security Tab */}
-                <TabsContent value="security" className="mt-6">
-                    <SecuritySettings />
-                </TabsContent>
+                {user?.role !== 'agent' && (
+                    <TabsContent value="security" className="mt-6">
+                        <SecuritySettings />
+                    </TabsContent>
+                )}
             </Tabs>
         </div>
     );

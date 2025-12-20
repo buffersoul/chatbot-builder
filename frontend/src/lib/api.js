@@ -124,6 +124,16 @@ export const acceptInvitation = async (data) => {
     return response.data;
 };
 
+export const removeUser = async (userId) => {
+    const response = await apiClient.delete(`/team/users/${userId}`);
+    return response.data;
+};
+
+export const updateMemberRole = async (userId, role) => {
+    const response = await apiClient.patch(`/team/users/${userId}/role`, { role });
+    return response.data;
+};
+
 // --- Meta Integration API ---
 
 export const getMetaAuthUrl = async () => {

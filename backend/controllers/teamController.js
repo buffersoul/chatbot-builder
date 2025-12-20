@@ -180,10 +180,87 @@ const acceptInvitation = async (req, res) => {
     }
 };
 
+const removeUser = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const companyId = req.company_id;
+        const requestorRole = req.user.role;
+        const requestorId = req.user.id;
+
+        const userToDelete = await User.findOne({ where: { id, company_id: companyId } });
+
+        if (!userToDelete) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+
+        if (userToDelete.id === requestorId) {
+            return res.status(400).json({ error: 'Cannot delete yourself' });
+        }
+
+        // Authorization Checks
+        if (requestorRole !== 'owner' && userToDelete.role === 'owner') {
+            return res.status(403).json({ error: 'Cannot delete ownership account' });
+        }
+        if (requestorRole === 'admin' && (userToDelete.role === 'admin' || userToDelete.role === 'owner')) {
+            return res.status(403).json({ error: 'Admins cannot delete other Admins or Owners' });
+        }
+
+        await userToDelete.destroy();
+        res.json({ message: 'User removed successfully' });
+
+    } catch (error) {
+        console.error('Remove user error:', error);
+        res.status(500).json({ error: 'Failed to remove user' });
+    }
+};
+
+const updateMemberRole = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { role } = req.body;
+        const companyId = req.company_id;
+        const requestorRole = req.user.role;
+
+        const userToUpdate = await User.findOne({ where: { id, company_id: companyId } });
+
+        if (!userToUpdate) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+
+        // prevent changing owner's role
+        if (userToUpdate.role === 'owner') {
+            return res.status(403).json({ error: 'Cannot change role of the Owner' });
+        }
+
+        // Authorization Checks
+        if (requestorRole === 'admin') {
+            if (userToUpdate.role === 'admin' || userToUpdate.role === 'owner') {
+                return res.status(403).json({ error: 'Admins cannot modify other Admins or Owners' });
+            }
+            if (role === 'owner' || role === 'admin') {
+                return res.status(403).json({ error: 'Admins can only assign Agent role' });
+            }
+        }
+
+        // Owner can do anything (except maybe demote themselves? assuming standard logic)
+
+        userToUpdate.role = role;
+        await userToUpdate.save();
+
+        res.json({ message: 'Role updated successfully', user: userToUpdate });
+
+    } catch (error) {
+        console.error('Update role error:', error);
+        res.status(500).json({ error: 'Failed to update role' });
+    }
+};
+
 module.exports = {
     getTeam,
     createInvitation,
     revokeInvitation,
     verifyInvitation,
-    acceptInvitation
+    acceptInvitation,
+    removeUser,
+    updateMemberRole
 };

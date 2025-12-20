@@ -5,7 +5,7 @@ const usageService = require('../services/billing/usageService');
 const { PricingTier, Company } = require('../models');
 
 // Auth Middleware (Lazy load to avoid circular deps if any)
-const { authenticate: authMiddleware } = require('../middleware/authMiddleware');
+const { authenticate: authMiddleware, authorize } = require('../middleware/authMiddleware');
 
 /**
  * @route GET /api/billing/plans
@@ -27,7 +27,7 @@ router.get('/plans', async (req, res) => {
  * @route GET /api/billing/usage
  * @desc Get current usage stats
  */
-router.get('/usage', authMiddleware, async (req, res) => {
+router.get('/usage', authMiddleware, authorize('owner'), async (req, res) => {
     try {
         const stats = await usageService.getUsageStats(req.company_id);
         res.json(stats);
@@ -40,7 +40,7 @@ router.get('/usage', authMiddleware, async (req, res) => {
  * @route POST /api/billing/checkout
  * @desc Create Stripe Checkout Session for subscription
  */
-router.post('/checkout', authMiddleware, async (req, res) => {
+router.post('/checkout', authMiddleware, authorize('owner'), async (req, res) => {
     try {
         const { tier_name, interval } = req.body;
         const url = await stripeService.createSubscriptionCheckout(req.company_id, tier_name, interval);
@@ -55,7 +55,7 @@ router.post('/checkout', authMiddleware, async (req, res) => {
  * @route POST /api/billing/portal
  * @desc Create Customer Portal Session
  */
-router.post('/portal', authMiddleware, async (req, res) => {
+router.post('/portal', authMiddleware, authorize('owner'), async (req, res) => {
     try {
         const url = await stripeService.createPortalSession(req.company_id);
         res.json({ url });
@@ -68,7 +68,7 @@ router.post('/portal', authMiddleware, async (req, res) => {
  * @route GET /api/billing/invoices
  * @desc Get invoice history
  */
-router.get('/invoices', authMiddleware, async (req, res) => {
+router.get('/invoices', authMiddleware, authorize('owner'), async (req, res) => {
     try {
         const invoices = await stripeService.getInvoices(req.company_id);
         res.json(invoices);
