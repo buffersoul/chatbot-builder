@@ -190,3 +190,23 @@ export const getInvoices = async () => {
 }
 
 export default apiClient
+// Company APIs (Tools)
+export const getCompanyApis = async () => {
+    const response = await apiClient.get('/company-apis');
+    return response.data;
+};
+
+export const createCompanyApi = async (data) => {
+    const response = await apiClient.post('/company-apis', data);
+    return response.data;
+};
+
+export const updateCompanyApi = async (id, data) => {
+    const response = await apiClient.put(`/company-apis/${id}`, data);
+    return response.data;
+};
+
+export const deleteCompanyApi = async (id) => {
+    const response = await apiClient.delete(`/company-apis/${id}`);
+    return response.data;
+};

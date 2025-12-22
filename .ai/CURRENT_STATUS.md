@@ -10,7 +10,12 @@
 - **Phase 3:** RAG Chatbot Engine (LangChain + Gemini)
 - **Phase 6:** Stripe Billing & Usage Tracking (Backend)
 - **Phase 7:** Frontend Dashboard & Billing UI
-- **Phase 8:** Team Management & Invitations (Owner/Admin roles)
+- **Phase 8:**
+  - Added "Share on WhatsApp" to invitations.
+- Implemented External API Management (CRUD) for chatbot tools. (New sidebar section: "API Tools")
+- Resolved Vite build errors related to missing UI components.
+- Fixed backend crash caused by incorrect middleware function name in `companyApiRoutes.js`.
+  (Owner/Admin roles)
 
 ---
 

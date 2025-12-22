@@ -1,4 +1,16 @@
-# AI Changelog
+- **Timestamp**: 2025-12-22
+- **Action**: Implemented External API Management (Tooling) UI and Backend.
+- **Reasoning**: Added missing core feature to manage external APIs used by LLM tools.
+- **Context**: Added `CompanyApi` routes/controller, `ExternalApisPage.jsx`, and missing shadcn components (`select`, `switch`, `textarea`).
+
+- **Timestamp**: 2025-12-22 (Update)
+- **Action**: Fixed backend crash due to incorrect middleware import in `companyApiRoutes.js`.
+- **Reasoning**: `authMiddleware.js` exports `authenticate`, but the routes file was trying to use `authMiddleware` which was undefined.
+- **Context**: Fixed `TypeError: Router.use() requires a middleware function`.
+
+- **Timestamp**: 2025-12-22 (Update)
+- **Action**: Fixed Vite import errors in `ExternalApisPage.jsx`.
+- **Reasoning**: Installed missing shadcn UI components and Radix primitives; corrected `use-toast` import path.
 
 This file tracks all technical changes, architectural decisions, and context for future AI sessions.
 

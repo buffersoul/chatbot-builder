@@ -24,6 +24,7 @@ function DashboardLayout() {
         { href: '/chat', icon: MessageSquare, label: 'Experience Chat', roles: ['owner', 'admin', 'agent'] },
         { href: '/conversations', icon: MessageSquare, label: 'Conversations', roles: ['owner', 'admin', 'agent'] },
         { href: '/integrations', icon: Share2, label: 'Integrations', roles: ['owner', 'admin'] },
+        { href: '/external-apis', icon: Bot, label: 'API Tools', roles: ['owner', 'admin'] },
         { href: '/billing', icon: CreditCard, label: 'Billing', roles: ['owner'] },
         { href: '/settings', icon: Settings, label: 'Settings', roles: ['owner', 'admin'] },
     ]

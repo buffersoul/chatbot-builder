@@ -12,6 +12,7 @@ import SettingsPage from './pages/SettingsPage'
 
 import ConversationsPage from './pages/ConversationsPage'
 import AcceptInvitePage from './pages/AcceptInvitePage'; // Import Accept Invite
+import ExternalApisPage from './pages/ExternalApisPage';
 import { Toaster } from "@/components/ui/toaster"
 
 
@@ -42,6 +43,7 @@ function App() {
                     <Route path="/integrations" element={<IntegrationsPage />} />
                     <Route path="/billing" element={<BillingPage />} />
                     <Route path="/settings" element={<SettingsPage />} />
+                    <Route path="/external-apis" element={<ExternalApisPage />} />
                     <Route path="*" element={<Navigate to="/" replace />} />
                 </Route>
             </Routes>

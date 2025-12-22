@@ -32,7 +32,8 @@ const metaRoutes = require('./routes/metaRoutes');
 const billingRoutes = require('./routes/billingRoutes');
 const conversationRoutes = require('./routes/conversationRoutes');
 const dashboardRoutes = require('./routes/dashboardRoutes');
-const teamRoutes = require('./routes/teamRoutes'); // New: Require teamRoutes
+const teamRoutes = require('./routes/teamRoutes');
+const companyApiRoutes = require('./routes/companyApiRoutes');
 
 app.use('/api/auth', authRoutes);
 app.use('/api/documents', documentRoutes);
@@ -41,7 +42,8 @@ app.use('/api/meta', metaRoutes);
 app.use('/api/billing', billingRoutes);
 app.use('/api/conversations', conversationRoutes);
 app.use('/api/dashboard', dashboardRoutes);
-app.use('/api/team', teamRoutes); // New: Mount teamRoutes
+app.use('/api/team', teamRoutes);
+app.use('/api/company-apis', companyApiRoutes);
 
 // Health check
 app.get('/health', (req, res) => {
