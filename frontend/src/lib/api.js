@@ -101,8 +101,8 @@ export const getTeam = async () => {
     return response.data;
 };
 
-export const createInvitation = async (email, role) => {
-    const response = await apiClient.post('/team/invite', { email, role });
+export const createInvitation = async (data) => {
+    const response = await apiClient.post('/team/invite', data);
     return response.data;
 };
 

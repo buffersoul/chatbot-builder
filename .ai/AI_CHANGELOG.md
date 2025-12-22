@@ -199,3 +199,27 @@ Will be documented in `.env.example` during Phase 0 setup
 ### Context
 - Full billing stack (Backend + Frontend) is now implemented.
 - **Next Steps**: End-to-End testing and Quality Assurance (Phase 8).
+
+---
+
+## [2025-12-20 00:30 PKT] - Team Management & RBAC Enhancements
+
+### Action
+- **Backend:** Created `Invitation` model and `teamController.js`.
+- **Frontend:** Created `TeamSettings.jsx` and `AcceptInvitePage.jsx`.
+- **Security:** Granular RBAC (Owner/Admin/Agent).
+
+### Reasoning
+- Essential for multi-user collaboration.
+
+---
+
+## [2025-12-22 14:55 PKT] - UI and API Bug Fixes
+
+### Action
+- **UI:** Refactored `Button` component to use `React.forwardRef`.
+- **API Integration:** Fixed `createInvitation` in `api.js` to accept a single object argument to match frontend usage, preventing backend errors.
+- **Database:** Re-ran migrations for `invitations` table.
+
+### Reasoning
+- Fixed mismatches between frontend calls and backend expectations.
