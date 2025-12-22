@@ -34,7 +34,7 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Loader2, Plus, Trash2, Mail, Copy, Check, MoreVertical, Shield, UserMinus } from "lucide-react";
+import { Loader2, Plus, Trash2, Mail, Copy, Check, MoreVertical, Shield, UserMinus, MessageSquare } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { useAuthStore } from "@/store/authStore";
@@ -274,7 +274,7 @@ const TeamSettings = () => {
                                             />
                                         </div>
                                         <Button
-                                            type="submit"
+                                            type="button"
                                             size="sm"
                                             className="px-3"
                                             onClick={copyToClipboard}
@@ -285,6 +285,19 @@ const TeamSettings = () => {
                                             ) : (
                                                 <Copy className="h-4 w-4" />
                                             )}
+                                        </Button>
+                                        <Button
+                                            type="button"
+                                            size="sm"
+                                            variant="outline"
+                                            className="px-3 text-green-600 border-green-200 hover:bg-green-50 hover:text-green-700 hover:border-green-300"
+                                            onClick={() => {
+                                                const text = encodeURIComponent(`Join our team! Click here to accept your invitation: ${generatedLink}`);
+                                                window.open(`https://wa.me/?text=${text}`, '_blank');
+                                            }}
+                                            title="Share on WhatsApp"
+                                        >
+                                            <MessageSquare className="h-4 w-4" />
                                         </Button>
                                     </div>
                                     <div className="text-sm text-muted-foreground">
@@ -398,12 +411,41 @@ const TeamSettings = () => {
                                         <TableCell>
                                             {new Date(invite.expires_at).toLocaleDateString()}
                                         </TableCell>
-                                        <TableCell className="text-right">
+                                        <TableCell className="text-right space-x-2">
+                                            <Button
+                                                variant="ghost"
+                                                size="icon"
+                                                onClick={() => {
+                                                    const link = `${window.location.origin}/accept-invite?token=${invite.token}`;
+                                                    const text = encodeURIComponent(`Join our team! Click here to accept your invitation: ${link}`);
+                                                    window.open(`https://wa.me/?text=${text}`, '_blank');
+                                                }}
+                                                title="Share on WhatsApp"
+                                                className="text-green-600 hover:text-green-700 hover:bg-green-50"
+                                            >
+                                                <MessageSquare className="h-4 w-4" />
+                                            </Button>
+                                            <Button
+                                                variant="ghost"
+                                                size="icon"
+                                                onClick={() => {
+                                                    const link = `${window.location.origin}/accept-invite?token=${invite.token}`;
+                                                    navigator.clipboard.writeText(link);
+                                                    toast({
+                                                        title: "Link Copied",
+                                                        description: "Invitation link has been copied to clipboard.",
+                                                    });
+                                                }}
+                                                title="Copy Link"
+                                            >
+                                                <Copy className="h-4 w-4" />
+                                            </Button>
                                             <Button
                                                 variant="ghost"
                                                 size="icon"
                                                 onClick={() => handleRevoke(invite.id)}
                                                 className="text-destructive hover:text-destructive/90"
+                                                title="Revoke Invitation"
                                             >
                                                 <Trash2 className="h-4 w-4" />
                                             </Button>
