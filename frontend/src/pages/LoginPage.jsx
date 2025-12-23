@@ -31,23 +31,28 @@ function LoginPage() {
     }
 
     return (
-        <div className="flex items-center justify-center min-h-screen bg-muted/40 px-4">
-            <Card className="w-full max-w-md">
-                <CardHeader className="space-y-1 text-center">
-                    <CardTitle className="text-2xl font-bold">Login</CardTitle>
-                    <CardDescription>
-                        Enter your email and password to access your account
+        <div className="flex items-center justify-center min-h-screen bg-gradient-subtle px-4 py-12">
+            <Card className="w-full max-w-md shadow-glow animate-scale-in">
+                <CardHeader className="space-y-3 text-center pb-8">
+                    <div className="mx-auto h-14 w-14 rounded-2xl bg-gradient-to-br from-primary to-accent flex items-center justify-center shadow-lg mb-2">
+                        <svg className="h-8 w-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z" />
+                        </svg>
+                    </div>
+                    <CardTitle className="text-3xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">Welcome Back</CardTitle>
+                    <CardDescription className="text-base">
+                        Enter your credentials to access your account
                     </CardDescription>
                 </CardHeader>
                 <CardContent>
-                    <form onSubmit={handleSubmit} className="space-y-4">
+                    <form onSubmit={handleSubmit} className="space-y-5">
                         {error && (
-                            <div className="p-3 bg-destructive/10 border border-destructive/20 text-destructive text-sm rounded-md">
+                            <div className="p-4 bg-destructive/10 border-2 border-destructive/30 text-destructive text-sm rounded-lg animate-fade-in">
                                 {error}
                             </div>
                         )}
                         <div className="space-y-2">
-                            <Label htmlFor="email">Email</Label>
+                            <Label htmlFor="email" className="text-sm font-semibold">Email</Label>
                             <Input
                                 id="email"
                                 type="email"
@@ -59,8 +64,8 @@ function LoginPage() {
                         </div>
                         <div className="space-y-2">
                             <div className="flex items-center justify-between">
-                                <Label htmlFor="password">Password</Label>
-                                <Link to="/forgot-password" name="forgot_password_link" className="text-sm text-primary hover:underline">
+                                <Label htmlFor="password" className="text-sm font-semibold">Password</Label>
+                                <Link to="/forgot-password" name="forgot_password_link" className="text-sm text-primary hover:text-primary/80 font-medium transition-colors">
                                     Forgot password?
                                 </Link>
                             </div>
@@ -72,16 +77,16 @@ function LoginPage() {
                                 required
                             />
                         </div>
-                        <Button type="submit" className="w-full" disabled={loading}>
-                            {loading ? 'Logging in...' : 'Login'}
+                        <Button type="submit" size="lg" className="w-full mt-6" disabled={loading}>
+                            {loading ? 'Logging in...' : 'Sign In'}
                         </Button>
                     </form>
                 </CardContent>
-                <CardFooter className="flex flex-col space-y-2 text-center text-sm">
+                <CardFooter className="flex flex-col space-y-2 text-center text-sm border-t pt-6">
                     <div className="text-muted-foreground">
                         Don't have an account?{' '}
-                        <Link to="/register" name="register_link" className="text-primary hover:underline">
-                            Register company
+                        <Link to="/register" name="register_link" className="text-primary hover:text-primary/80 font-semibold transition-colors">
+                            Create account
                         </Link>
                     </div>
                 </CardFooter>
