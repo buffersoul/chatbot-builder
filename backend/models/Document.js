@@ -5,6 +5,7 @@ module.exports = (sequelize, DataTypes) => {
     class Document extends Model {
         static associate(models) {
             Document.belongsTo(models.Company, { foreignKey: 'company_id', as: 'company' });
+            Document.belongsTo(models.Bot, { foreignKey: 'bot_id', as: 'bot' });
             Document.hasMany(models.Embedding, { foreignKey: 'document_id', as: 'embeddings' });
         }
     }
@@ -17,6 +18,10 @@ module.exports = (sequelize, DataTypes) => {
         company_id: {
             type: DataTypes.UUID,
             allowNull: false
+        },
+        bot_id: {
+            type: DataTypes.UUID,
+            allowNull: true // Will be enforced in logic or later migration
         },
         filename: {
             type: DataTypes.STRING,

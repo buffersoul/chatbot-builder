@@ -48,9 +48,11 @@ apiClient.interceptors.response.use(
 )
 
 
-export const uploadDocument = async (file, onUploadProgress) => {
+// --- Document API ---
+export const uploadDocument = async (file, botId, onUploadProgress) => {
     const formData = new FormData()
     formData.append('file', file)
+    formData.append('bot_id', botId) // Added for multi-bot
 
     return apiClient.post('/documents/upload', formData, {
         headers: {
@@ -60,18 +62,44 @@ export const uploadDocument = async (file, onUploadProgress) => {
     })
 }
 
-export const getDocuments = async () => {
-    return apiClient.get('/documents')
+export const getDocuments = async (botId) => {
+    return apiClient.get('/documents', { params: { botId } }) // Added botId
 }
 
 export const deleteDocument = async (id) => {
     return apiClient.delete(`/documents/${id}`)
 }
 
+// --- Bot API ---
+export const getBots = async () => {
+    const response = await apiClient.get('/bots');
+    return response.data;
+};
+
+export const createBot = async (data) => {
+    const response = await apiClient.post('/bots', data);
+    return response.data;
+};
+
+export const updateBot = async (id, data) => {
+    const response = await apiClient.put(`/bots/${id}`, data);
+    return response.data;
+};
+
+export const deleteBot = async (id) => {
+    const response = await apiClient.delete(`/bots/${id}`);
+    return response.data;
+};
+
 // --- Chat API ---
 
-export const sendChatMessage = async (companyId, message, visitorId = null) => {
-    const response = await apiClient.post('/chat/message', { company_id: companyId, message, visitor_id: visitorId })
+export const sendChatMessage = async (companyId, message, visitorId = null, botId = null) => {
+    const response = await apiClient.post('/chat/message', {
+        company_id: companyId,
+        message,
+        visitor_id: visitorId,
+        bot_id: botId // Added for multi-bot
+    })
     return response.data
 }
 
@@ -112,9 +140,6 @@ export const revokeInvitation = async (id) => {
 };
 
 export const verifyInvitation = async (token) => {
-    // Uses public endpoint, but apiClient instance might have auth headers. 
-    // Usually fine, but if token is invalid, we handle error.
-    // Note: This matches /api/team/verify-invite?token=...
     const response = await apiClient.get(`/team/verify-invite?token=${token}`);
     return response.data;
 };
@@ -189,10 +214,9 @@ export const getInvoices = async () => {
     return response.data
 }
 
-export default apiClient
 // Company APIs (Tools)
-export const getCompanyApis = async () => {
-    const response = await apiClient.get('/company-apis');
+export const getCompanyApis = async (botId) => {
+    const response = await apiClient.get('/company-apis', { params: { botId } }); // Added botId
     return response.data;
 };
 
@@ -210,3 +234,5 @@ export const deleteCompanyApi = async (id) => {
     const response = await apiClient.delete(`/company-apis/${id}`);
     return response.data;
 };
+
+export default apiClient

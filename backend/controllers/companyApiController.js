@@ -6,8 +6,14 @@ const { CompanyApi } = require('../models');
 const listApis = async (req, res) => {
     try {
         const companyId = req.company_id;
+        const { botId } = req.query;
+
+        if (!botId) {
+            return res.status(400).json({ error: 'botId query parameter is required' });
+        }
+
         const apis = await CompanyApi.findAll({
-            where: { company_id: companyId },
+            where: { company_id: companyId, bot_id: botId },
             order: [['created_at', 'DESC']]
         });
         res.json(apis);
@@ -46,6 +52,7 @@ const createApi = async (req, res) => {
     try {
         const companyId = req.company_id;
         const {
+            bot_id,
             name,
             description,
             endpoint_url,
@@ -57,8 +64,13 @@ const createApi = async (req, res) => {
             parameters_schema
         } = req.body;
 
+        if (!bot_id) {
+            return res.status(400).json({ error: 'bot_id is required' });
+        }
+
         const api = await CompanyApi.create({
             company_id: companyId,
+            bot_id,
             name,
             description,
             endpoint_url,

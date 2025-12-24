@@ -1,5 +1,6 @@
 import { Link, useLocation, Outlet } from 'react-router-dom'
 import { useAuthStore } from '../store/authStore'
+import { BotSelector } from './BotSelector'
 import { Button } from './ui/button'
 import {
     LayoutDashboard,
@@ -43,18 +44,13 @@ function DashboardLayout() {
                     </span>
                 </div>
 
-                {/* Company Info */}
-                <div className="px-4 pt-6 pb-4">
-                    <div className="mb-3 px-3 py-2 rounded-lg bg-muted/50 backdrop-blur-sm">
-                        <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                            Workspace
-                        </p>
-                        <p className="text-sm font-semibold text-foreground mt-1 truncate">
-                            {company?.name || 'Company'}
-                        </p>
-                    </div>
+                {/* Bot Selection */}
+                <div className="px-4 pb-4 border-b border-border/50">
+                    <BotSelector />
+                </div>
 
-                    {/* Navigation */}
+                {/* Navigation */}
+                <div className="px-4 py-4 flex-1 overflow-y-auto">
                     <nav className="space-y-1">
                         {navItems.map((item) => {
                             if (item.roles && !item.roles.includes(user?.role)) return null;

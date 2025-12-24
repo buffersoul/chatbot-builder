@@ -6,6 +6,7 @@ module.exports = (sequelize, DataTypes) => {
         static associate(models) {
             Embedding.belongsTo(models.Document, { foreignKey: 'document_id', as: 'document' });
             Embedding.belongsTo(models.Company, { foreignKey: 'company_id', as: 'company' });
+            Embedding.belongsTo(models.Bot, { foreignKey: 'bot_id', as: 'bot' });
         }
     }
     Embedding.init({
@@ -21,6 +22,10 @@ module.exports = (sequelize, DataTypes) => {
         document_id: {
             type: DataTypes.UUID,
             allowNull: false
+        },
+        bot_id: {
+            type: DataTypes.UUID,
+            allowNull: true
         },
         chunk_text: {
             type: DataTypes.TEXT,

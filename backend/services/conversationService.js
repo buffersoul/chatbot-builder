@@ -2,25 +2,29 @@ const { Conversation, Message, sequelize, Sequelize } = require('../models');
 const { Op } = Sequelize;
 
 /**
- * Create a new conversation or get active one for visitor.
+ * Get or create a conversation for a visitor
  * @param {String} companyId 
  * @param {String} visitorId 
+ * @param {String} platform 
+ * @param {String} botId
  * @returns {Promise<Conversation>}
  */
-const getOrCreateConversation = async (companyId, visitorId, platform = 'web') => {
+const getOrCreateConversation = async (companyId, visitorId, platform = 'web', botId = null) => {
     try {
         let conversation = await Conversation.findOne({
             where: {
                 company_id: companyId,
                 visitor_id: visitorId,
                 status: 'active',
-                platform
+                platform,
+                bot_id: botId
             }
         });
 
         if (!conversation) {
             conversation = await Conversation.create({
                 company_id: companyId,
+                bot_id: botId,
                 visitor_id: visitorId,
                 status: 'active',
                 platform,

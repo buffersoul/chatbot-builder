@@ -4,6 +4,7 @@ module.exports = (sequelize, DataTypes) => {
     class Conversation extends Model {
         static associate(models) {
             Conversation.belongsTo(models.Company, { foreignKey: 'company_id', as: 'company' });
+            Conversation.belongsTo(models.Bot, { foreignKey: 'bot_id', as: 'bot' });
             Conversation.hasMany(models.Message, { foreignKey: 'conversation_id', as: 'messages' });
         }
     }
@@ -16,6 +17,10 @@ module.exports = (sequelize, DataTypes) => {
         company_id: {
             type: DataTypes.UUID,
             allowNull: false
+        },
+        bot_id: {
+            type: DataTypes.UUID,
+            allowNull: true
         },
         visitor_id: DataTypes.STRING,
         status: {

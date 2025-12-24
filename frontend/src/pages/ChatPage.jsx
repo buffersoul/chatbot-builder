@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useAuthStore } from '../store/authStore';
 import { sendChatMessage, getChatHistory } from '../lib/api';
+import { useBotStore } from '../store/botStore';
 import ChatBubble from '../components/chat/ChatBubble';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -9,6 +10,7 @@ import { Send, Bot, RefreshCw } from 'lucide-react';
 
 const ChatPage = () => {
     const { user } = useAuthStore();
+    const { selectedBotId, getSelectedBot } = useBotStore();
     const [messages, setMessages] = useState([]);
     const [inputValue, setInputValue] = useState('');
     const [isLoading, setIsLoading] = useState(false);
@@ -50,7 +52,7 @@ const ChatPage = () => {
 
             const companyId = user.company_id || useAuthStore.getState().company?.id;
 
-            const response = await sendChatMessage(companyId, userMessage, user.id);
+            const response = await sendChatMessage(companyId, userMessage, user.id, selectedBotId);
 
             // Response contains: { response, conversationId, sources }
             if (response.conversationId && !conversationId) {
@@ -85,7 +87,7 @@ const ChatPage = () => {
                 <CardHeader className="border-b bg-muted/30">
                     <CardTitle className="flex items-center gap-2">
                         <Bot className="w-6 h-6 text-primary" />
-                        AI Assistant Preview
+                        {getSelectedBot()?.name || 'AI Assistant'} Preview
                     </CardTitle>
                 </CardHeader>
 
@@ -115,19 +117,25 @@ const ChatPage = () => {
                 </CardContent>
 
                 <CardFooter className="border-t p-4 bg-muted/10">
-                    <form onSubmit={handleSendMessage} className="flex w-full gap-2">
-                        <Input
-                            value={inputValue}
-                            onChange={(e) => setInputValue(e.target.value)}
-                            placeholder="Type a message..."
-                            disabled={isLoading}
-                            className="flex-1"
-                        />
-                        <Button type="submit" disabled={isLoading || !inputValue.trim()}>
-                            {isLoading ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
-                            <span className="sr-only">Send</span>
-                        </Button>
-                    </form>
+                    {!selectedBotId ? (
+                        <div className="w-full text-center text-sm text-amber-600 font-medium">
+                            Please select a bot in the sidebar to start chatting.
+                        </div>
+                    ) : (
+                        <form onSubmit={handleSendMessage} className="flex w-full gap-2">
+                            <Input
+                                value={inputValue}
+                                onChange={(e) => setInputValue(e.target.value)}
+                                placeholder={`Message ${getSelectedBot()?.name}...`}
+                                disabled={isLoading}
+                                className="flex-1"
+                            />
+                            <Button type="submit" disabled={isLoading || !inputValue.trim()}>
+                                {isLoading ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
+                                <span className="sr-only">Send</span>
+                            </Button>
+                        </form>
+                    )}
                 </CardFooter>
             </Card>
         </div>

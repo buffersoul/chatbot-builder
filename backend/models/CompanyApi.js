@@ -12,6 +12,10 @@ module.exports = (sequelize, DataTypes) => {
                 foreignKey: 'company_id',
                 onDelete: 'CASCADE'
             });
+            CompanyApi.belongsTo(models.Bot, {
+                foreignKey: 'bot_id',
+                onDelete: 'CASCADE'
+            });
         }
     }
     CompanyApi.init({
@@ -26,6 +30,14 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: false,
             references: {
                 model: 'companies',
+                key: 'id'
+            }
+        },
+        bot_id: {
+            type: DataTypes.UUID,
+            allowNull: true,
+            references: {
+                model: 'bots',
                 key: 'id'
             }
         },

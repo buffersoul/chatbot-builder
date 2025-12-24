@@ -53,6 +53,7 @@ import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import * as api from '@/lib/api';
+import { useBotStore } from '../store/botStore'
 
 export default function ExternalApisPage() {
     const [apis, setApis] = useState([]);
@@ -60,6 +61,7 @@ export default function ExternalApisPage() {
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const [isSaving, setIsSaving] = useState(false);
     const [editingApi, setEditingApi] = useState(null);
+    const { selectedBotId } = useBotStore();
     const { toast } = useToast();
 
     // Form State
@@ -78,13 +80,18 @@ export default function ExternalApisPage() {
     });
 
     useEffect(() => {
-        fetchApis();
-    }, []);
+        if (selectedBotId) {
+            fetchApis();
+        } else {
+            setApis([]);
+            setLoading(false);
+        }
+    }, [selectedBotId]);
 
     const fetchApis = async () => {
         try {
             setLoading(true);
-            const data = await api.getCompanyApis();
+            const data = await api.getCompanyApis(selectedBotId);
             setApis(data);
         } catch (error) {
             console.error('Fetch APIs error:', error);
@@ -150,6 +157,7 @@ export default function ExternalApisPage() {
 
             const payload = {
                 ...formData,
+                bot_id: selectedBotId,
                 parameters_schema: parsedSchema
             };
 
@@ -223,7 +231,7 @@ export default function ExternalApisPage() {
                         Create and manage external APIs that your chatbot can use as dynamic tools.
                     </p>
                 </div>
-                <Button onClick={() => handleOpenDialog()}>
+                <Button onClick={() => handleOpenDialog()} disabled={!selectedBotId}>
                     <Plus className="mr-2 h-4 w-4" />
                     New API Tool
                 </Button>
@@ -241,11 +249,17 @@ export default function ExternalApisPage() {
                         <div className="flex justify-center py-8">
                             <Loader2 className="h-8 w-8 animate-spin text-primary" />
                         </div>
+                    ) : !selectedBotId ? (
+                        <div className="text-center py-12 border-2 border-dashed rounded-lg">
+                            <AlertCircle className="mx-auto h-12 w-12 text-amber-500 mb-4" />
+                            <h3 className="text-lg font-medium text-amber-700">No bot selected</h3>
+                            <p className="text-muted-foreground mb-6">Select or create a bot in the sidebar to manage its API tools.</p>
+                        </div>
                     ) : apis.length === 0 ? (
                         <div className="text-center py-12 border-2 border-dashed rounded-lg">
                             <AlertCircle className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
                             <h3 className="text-lg font-medium">No API tools found</h3>
-                            <p className="text-muted-foreground mb-6">Get started by creating your first external tool integration.</p>
+                            <p className="text-muted-foreground mb-6">Get started by creating your first external tool integration for this bot.</p>
                             <Button variant="outline" onClick={() => handleOpenDialog()}>
                                 <Plus className="mr-2 h-4 w-4" />
                                 Add your first API

@@ -12,15 +12,21 @@ const upload = async (req, res) => {
         }
 
         const { company_id } = req;
+        const { bot_id } = req.body;
         const file = req.file;
 
+        if (!bot_id) {
+            return res.status(400).json({ error: 'bot_id is required' });
+        }
+
         // Upload to Firebase
-        const destination = `companies/${company_id}/documents/`;
+        const destination = `companies/${company_id}/bots/${bot_id}/documents/`;
         const firebasePath = await uploadFile(file, destination);
 
         // Create Database Record
         const document = await Document.create({
             company_id,
+            bot_id,
             filename: file.originalname,
             file_type: file.mimetype === 'application/pdf' ? 'pdf' :
                 file.mimetype === 'text/plain' ? 'txt' : 'docx',
@@ -49,8 +55,14 @@ const upload = async (req, res) => {
 const list = async (req, res) => {
     try {
         const { company_id } = req;
+        const { botId } = req.query;
+
+        if (!botId) {
+            return res.status(400).json({ error: 'botId query parameter is required' });
+        }
+
         const documents = await Document.findAll({
-            where: { company_id },
+            where: { company_id, bot_id: botId },
             order: [['created_at', 'DESC']]
         });
 

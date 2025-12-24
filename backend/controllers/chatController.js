@@ -7,7 +7,7 @@ const conversationService = require('../services/conversationService');
  */
 const sendMessage = async (req, res) => {
     try {
-        const { message, visitor_id } = req.body;
+        const { message, visitor_id, bot_id } = req.body;
         console.log('DEBUG CHAT: Request Body:', req.body);
         console.log('DEBUG CHAT: User:', req.user);
         // In a real app, company_id might come from subdomain or API key.
@@ -29,7 +29,7 @@ const sendMessage = async (req, res) => {
         // If not provided, we could generate one, but better to require it or use user id
         const visitorIdToUse = visitor_id || (req.user ? req.user.id : 'anonymous_visitor');
 
-        const result = await ragService.executeRAGChatbot(companyId, visitorIdToUse, message);
+        const result = await ragService.executeRAGChatbot(companyId, visitorIdToUse, message, 'web', bot_id);
 
         res.json(result);
 

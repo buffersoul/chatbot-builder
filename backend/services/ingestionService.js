@@ -103,12 +103,13 @@ const processDocument = async (documentId, fileBuffer, fileType) => {
             // Prepare records
             for (let j = 0; j < batch.length; j++) {
                 embeddingRecords.push({
-                    id: crypto.randomUUID(), // Or let DB handle it if strictly using Sequelize default
+                    id: crypto.randomUUID(),
                     company_id: document.company_id,
+                    bot_id: document.bot_id,
                     document_id: documentId,
                     chunk_text: batch[j],
                     chunk_index: i + j,
-                    embedding: vectors[j], // Ensure this matches pgvector format (array of numbers)
+                    embedding: vectors[j],
                     metadata: { source: document.filename }
                 });
             }

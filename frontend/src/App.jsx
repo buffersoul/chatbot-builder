@@ -13,6 +13,7 @@ import SettingsPage from './pages/SettingsPage'
 import ConversationsPage from './pages/ConversationsPage'
 import AcceptInvitePage from './pages/AcceptInvitePage'; // Import Accept Invite
 import ExternalApisPage from './pages/ExternalApisPage';
+import BotsPage from './pages/BotsPage'
 import { Toaster } from "@/components/ui/toaster"
 
 
@@ -44,6 +45,7 @@ function App() {
                     <Route path="/billing" element={<BillingPage />} />
                     <Route path="/settings" element={<SettingsPage />} />
                     <Route path="/external-apis" element={<ExternalApisPage />} />
+                    <Route path="/bots" element={<BotsPage />} />
                     <Route path="*" element={<Navigate to="/" replace />} />
                 </Route>
             </Routes>

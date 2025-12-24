@@ -14,10 +14,11 @@ const embeddingsModel = new GoogleGenerativeAIEmbeddings({
  * Search for relevant document chunks.
  * @param {String} companyId 
  * @param {String} query 
+ * @param {String} botId
  * @param {Number} limit 
  * @returns {Promise<Array>}
  */
-const searchParams = async (companyId, query, limit = 30) => {
+const searchParams = async (companyId, query, botId, limit = 30) => {
     try {
         // 1. Generate Query Embedding
         const queryVector = await embeddingsModel.embedQuery(query);
@@ -38,13 +39,14 @@ const searchParams = async (companyId, query, limit = 30) => {
                 metadata, 
                 1 - (embedding <=> :vector) as similarity
              FROM embeddings
-             WHERE company_id = :companyId
+             WHERE company_id = :companyId AND bot_id = :botId
              ORDER BY embedding <=> :vector
              LIMIT :limit`,
             {
                 replacements: {
                     vector: vectorString,
                     companyId: companyId,
+                    botId: botId,
                     limit: limit
                 },
                 type: sequelize.QueryTypes.SELECT

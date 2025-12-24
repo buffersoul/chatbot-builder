@@ -11,40 +11,33 @@ const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY);
  * @param {String} companyId 
  * @param {String} visitorId 
  * @param {String} userQuery 
- * @returns {Promise<String>}
+ * @param {String} platform
+ * @param {String} botId
+ * @returns {Promise<Object>}
  */
-const { CompanyApi } = require('../models');
-const CompanyAPITool = require('./tools/CompanyAPITool');
-
-// ... (Initialize Gemini Pro is fine outside, but we need dynamic tools per request)
-// We will move model initialization inside or use a cached factory if we want per-request tools.
-// Gemini allows passing tools at generation time.
-
-/**
- * Main RAG Execution Flow.
- * @param {String} companyId 
- * @param {String} visitorId 
- * @param {String} userQuery 
- * @returns {Promise<String>}
- */
-const executeRAGChatbot = async (companyId, visitorId, userQuery, platform = 'web') => {
+const executeRAGChatbot = async (companyId, visitorId, userQuery, platform = 'web', botId = null) => {
     try {
         // 1. Get Conversation Context
-        const conversation = await conversationService.getOrCreateConversation(companyId, visitorId, platform);
+        const conversation = await conversationService.getOrCreateConversation(companyId, visitorId, platform, botId);
 
         // 2. Add User Message to History
         await conversationService.addMessage(conversation.id, 'user', userQuery);
 
-        console.log(`Processing RAG for Co:${companyId} / Conv:${conversation.id} / Q:${userQuery}`);
+        console.log(`Processing RAG for Bot:${botId} / Conv:${conversation.id} / Q:${userQuery}`);
 
         // 3. Retrieve Relevant Documents (RAG Context)
-        const similarChunks = await retrievalService.searchParams(companyId, userQuery, 30);
+        const similarChunks = await retrievalService.searchParams(companyId, userQuery, botId, 30);
         const contextText = retrievalService.formatContext(similarChunks);
         console.log(`Retrieved ${similarChunks.length} chunks`);
 
-        // 4. Load Company Tools
+        const { Bot, CompanyApi } = require('../models');
+        const { CompanyAPITool } = require('./tools/CompanyAPITool');
+        const bot = await Bot.findByPk(botId);
+        if (!bot) throw new Error('Bot not found');
+
+        // 4. Load Company Tools for this Bot
         const companyApis = await CompanyApi.findAll({
-            where: { company_id: companyId, is_active: true }
+            where: { company_id: companyId, bot_id: botId, is_active: true }
         });
 
         const toolsMap = new Map();
@@ -60,7 +53,9 @@ const executeRAGChatbot = async (companyId, visitorId, userQuery, platform = 'we
         }
 
         // 5. Construct System Prompt
-        const systemPrompt = `You are a helpful AI assistant for a company. 
+        const systemPrompt = `You are ${bot.name}. ${bot.description || ''}
+${bot.system_prompt || 'You are a helpful AI assistant.'}
+
 Use the following context to answer the user's question. 
 If the answer is not in the context, check if you have any available tools that can help.
 If no tools or context apply, politely urge the user to contact human support.

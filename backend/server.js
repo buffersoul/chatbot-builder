@@ -34,6 +34,7 @@ const conversationRoutes = require('./routes/conversationRoutes');
 const dashboardRoutes = require('./routes/dashboardRoutes');
 const teamRoutes = require('./routes/teamRoutes');
 const companyApiRoutes = require('./routes/companyApiRoutes');
+const botRoutes = require('./routes/botRoutes');
 
 app.use('/api/auth', authRoutes);
 app.use('/api/documents', documentRoutes);
@@ -44,6 +45,7 @@ app.use('/api/conversations', conversationRoutes);
 app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/team', teamRoutes);
 app.use('/api/company-apis', companyApiRoutes);
+app.use('/api/bots', botRoutes);
 
 // Health check
 app.get('/health', (req, res) => {

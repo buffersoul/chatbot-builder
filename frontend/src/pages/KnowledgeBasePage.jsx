@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { getDocuments, uploadDocument, deleteDocument } from '../lib/api'
+import { useBotStore } from '../store/botStore'
 import { Button } from '../components/ui/button'
 import { Input } from '../components/ui/input'
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '../components/ui/card'
@@ -15,20 +16,23 @@ function KnowledgeBasePage() {
     const [error, setError] = useState('')
     const queryClient = useQueryClient()
 
+    const { selectedBotId } = useBotStore()
+
     // Fetch documents
     const { data: documentsData, isLoading } = useQuery({
-        queryKey: ['documents'],
-        queryFn: getDocuments,
+        queryKey: ['documents', selectedBotId],
+        queryFn: () => getDocuments(selectedBotId),
+        enabled: !!selectedBotId
     })
 
     // Upload mutation
     const uploadMutation = useMutation({
-        mutationFn: (file) => uploadDocument(file, (progressEvent) => {
+        mutationFn: (file) => uploadDocument(file, selectedBotId, (progressEvent) => {
             const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total)
             setUploadProgress(percentCompleted)
         }),
         onSuccess: () => {
-            queryClient.invalidateQueries(['documents'])
+            queryClient.invalidateQueries(['documents', selectedBotId])
             setFile(null)
             setUploadProgress(0)
             setError('')
@@ -43,7 +47,7 @@ function KnowledgeBasePage() {
     const deleteMutation = useMutation({
         mutationFn: deleteDocument,
         onSuccess: () => {
-            queryClient.invalidateQueries(['documents'])
+            queryClient.invalidateQueries(['documents', selectedBotId])
         }
     })
 
@@ -94,34 +98,42 @@ function KnowledgeBasePage() {
                         <CardDescription>Supported formats: PDF, DOCX, TXT</CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-4">
-                        <div className="grid w-full items-center gap-1.5">
-                            <Input
-                                type="file"
-                                accept=".pdf,.docx,.txt"
-                                onChange={handleFileChange}
-                            />
-                        </div>
-
-                        {error && (
-                            <div className="flex items-center gap-2 text-sm text-destructive bg-destructive/10 p-2 rounded">
-                                <AlertCircle className="h-4 w-4" />
-                                {error}
+                        {!selectedBotId ? (
+                            <div className="text-sm text-amber-600 bg-amber-50 p-3 rounded border border-amber-200">
+                                Please select or create a bot in the sidebar before uploading documents.
                             </div>
+                        ) : (
+                            <>
+                                <div className="grid w-full items-center gap-1.5">
+                                    <Input
+                                        type="file"
+                                        accept=".pdf,.docx,.txt"
+                                        onChange={handleFileChange}
+                                    />
+                                </div>
+
+                                {error && (
+                                    <div className="flex items-center gap-2 text-sm text-destructive bg-destructive/10 p-2 rounded">
+                                        <AlertCircle className="h-4 w-4" />
+                                        {error}
+                                    </div>
+                                )}
+
+                                {uploadProgress > 0 && <Progress value={uploadProgress} />}
+
+                                <Button
+                                    className="w-full"
+                                    disabled={!file || uploadMutation.isPending}
+                                    onClick={handleUpload}
+                                >
+                                    {uploadMutation.isPending ? 'Uploading...' : (
+                                        <>
+                                            <Upload className="mr-2 h-4 w-4" /> Upload
+                                        </>
+                                    )}
+                                </Button>
+                            </>
                         )}
-
-                        {uploadProgress > 0 && <Progress value={uploadProgress} />}
-
-                        <Button
-                            className="w-full"
-                            disabled={!file || uploadMutation.isPending}
-                            onClick={handleUpload}
-                        >
-                            {uploadMutation.isPending ? 'Uploading...' : (
-                                <>
-                                    <Upload className="mr-2 h-4 w-4" /> Upload
-                                </>
-                            )}
-                        </Button>
                     </CardContent>
                 </Card>
 
@@ -131,7 +143,11 @@ function KnowledgeBasePage() {
                         <CardTitle>My Documents</CardTitle>
                     </CardHeader>
                     <CardContent>
-                        {isLoading ? (
+                        {!selectedBotId ? (
+                            <div className="text-center text-muted-foreground py-8">
+                                Select a bot to see its knowledge base.
+                            </div>
+                        ) : isLoading ? (
                             <div>Loading documents...</div>
                         ) : documentsData?.data?.documents?.length === 0 ? (
                             <div className="text-center text-muted-foreground py-8">
